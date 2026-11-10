@@ -4,7 +4,6 @@ import 'package:vota_dolores_hidalgo/logica/servicio_votacion.dart';
 import 'package:vota_dolores_hidalgo/modelos/opcion_votacion.dart';
 import 'package:vota_dolores_hidalgo/modelos/votacion.dart';
 
-
 Votacion _crearVotacionDePrueba({DateTime? fechaCierre}) {
   return Votacion(
     pregunta: 'Pregunta de prueba',
@@ -17,7 +16,7 @@ Votacion _crearVotacionDePrueba({DateTime? fechaCierre}) {
 }
 
 void main() {
-  /*test('calcula el porcentaje de cada opcion correctamente', () {
+  test('calcula el porcentaje de cada opcion correctamente', () {
     final votacion = _crearVotacionDePrueba();
     final servicio = ServicioVotacion(votacion);
     servicio.registrarVoto(idUsuario: 'u1', idOpcion: 'op1');
@@ -42,7 +41,27 @@ void main() {
     expect(resultados.every((r) => r.porcentaje == 0), true);
   });
 
-    test('determinarGanador regresa la opcion con mas votos', () {
+  test('un usuario no puede votar dos veces', () {
+    final votacion = _crearVotacionDePrueba();
+    final servicio = ServicioVotacion(votacion);
+
+    final primero = servicio.registrarVoto(idUsuario: 'u1', idOpcion: 'op1');
+    final segundo = servicio.registrarVoto(idUsuario: 'u1', idOpcion: 'op2');
+
+    expect(primero, ResultadoVoto.exitoso);
+    expect(segundo, ResultadoVoto.usuarioYaVoto);
+    expect(votacion.opciones[1].votos, 0);
+  });
+
+  test('una opcion que no existe regresa opcionInvalida', () {
+    final servicio = ServicioVotacion(_crearVotacionDePrueba());
+
+    final resultado = servicio.registrarVoto(idUsuario: 'u1', idOpcion: 'nada');
+
+    expect(resultado, ResultadoVoto.opcionInvalida);
+  });
+
+  test('determinarGanador regresa la opcion con mas votos', () {
     final votacion = _crearVotacionDePrueba();
     final servicio = ServicioVotacion(votacion);
     servicio.registrarVoto(idUsuario: 'u1', idOpcion: 'op1');
@@ -55,7 +74,7 @@ void main() {
     expect(ganadores.first.id, 'op1');
   });
 
-    test('si hay empate, determinarGanador regresa mas de una opcion', () {
+  test('si hay empate, determinarGanador regresa mas de una opcion', () {
     final votacion = Votacion(
       pregunta: 'Pregunta de prueba',
       opciones: [
@@ -74,7 +93,8 @@ void main() {
 
     expect(ganadores.length, 3);
   });
-    test('no se puede votar si la votacion ya cerro', () {
+
+  test('no se puede votar si la votacion ya cerro', () {
     final votacionCerrada = _crearVotacionDePrueba(
       fechaCierre: DateTime(2000, 1, 1), // una fecha muy en el pasado
     );
@@ -95,8 +115,9 @@ void main() {
     final resultado = servicio.registrarVoto(idUsuario: 'user1', idOpcion: 'op1');
 
     expect(resultado, ResultadoVoto.exitoso);
-  });*/
-    test('simulacion completa: varios vecinos votan y se determina un ganador', () {
+  });
+
+  test('simulacion completa: varios vecinos votan y se determina un ganador', () {
     final votacion = Votacion(
       pregunta: 'Que obra prioritaria debe realizar el municipio?',
       opciones: [
@@ -121,7 +142,4 @@ void main() {
     expect(ganadores.length, 1);
     expect(ganadores.first.id, 'jardin');
   });
-  
-
-
 }
