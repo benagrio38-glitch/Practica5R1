@@ -46,15 +46,101 @@ flutter test
 |---|---|---|
 | ![Inicio](evidencia/01_inicio_0porciento.png) | ![Voto](evidencia/02_voto_registrado.png) | ![Resultado](evidencia/03_resultado_plebiscito.png) |
 
-### Pruebas automáticas
+## Pruebas (TDD, ronda por ronda)
 
-![flutter test](evidencia/04_flutter_test.png)
+Cada ronda muestra la prueba en **rojo** (falla) y después en **verde** (pasa). Como la app ya estaba terminada, el rojo se provocó cambiando temporalmente una línea del código, indicada en cada ronda. Después se revirtió el cambio con `git checkout` y se volvió a correr la prueba.
 
-Los avisos de voto repetido y de votación cerrada no se ven en pantalla: tras votar, la app oculta los botones. Esos casos se comprueban con pruebas.
+### Ronda 1 – Porcentajes
 
-## Pruebas
+**Prueba:** calcula el porcentaje de cada opción correctamente
+
+**Cambio para provocar el fallo:** `servicio_votacion.dart`: el cálculo del porcentaje se multiplicó por 10 en lugar de 100.
+
+**ROJO** – La prueba falla
+
+![Ronda 1 rojo](evidencia/tdd/r1_rojo.png)
+
+**VERDE** – Se revierte el cambio y la prueba pasa
+
+![Ronda 1 verde](evidencia/tdd/r1_verde.png)
+
+### Ronda 2 – Un usuario no vota dos veces
+
+**Prueba:** un usuario no puede votar dos veces
+
+**Cambio para provocar el fallo:** `servicio_votacion.dart`: se desactivó la validación de voto repetido (`if (false)`).
+
+**ROJO** – La prueba falla
+
+![Ronda 2 rojo](evidencia/tdd/r2_rojo.png)
+
+**VERDE** – Se revierte el cambio y la prueba pasa
+
+![Ronda 2 verde](evidencia/tdd/r2_verde.png)
+
+### Ronda 3 – Ganador y empate
+
+**Prueba:** determinarGanador regresa la opción con más votos
+
+**Cambio para provocar el fallo:** `servicio_votacion.dart`: se invirtió la comparación que busca el máximo de votos.
+
+**ROJO** – La prueba falla
+
+![Ronda 3 rojo](evidencia/tdd/r3_rojo.png)
+
+**VERDE** – Se revierte el cambio y la prueba pasa
+
+![Ronda 3 verde](evidencia/tdd/r3_verde.png)
+
+### Ronda 4 – Votación cerrada
+
+**Prueba:** no se puede votar si la votación ya cerró
+
+**Cambio para provocar el fallo:** `servicio_votacion.dart`: `isAfter` se cambió por `isBefore` al revisar la fecha de cierre.
+
+**ROJO** – La prueba falla
+
+![Ronda 4 rojo](evidencia/tdd/r4_rojo.png)
+
+**VERDE** – Se revierte el cambio y la prueba pasa
+
+![Ronda 4 verde](evidencia/tdd/r4_verde.png)
+
+### Ronda 5 – Simulación completa
+
+**Prueba:** simulación completa: varios vecinos votan y se determina un ganador
+
+**Cambio para provocar el fallo:** `servicio_votacion.dart`: cada voto sumaba 2 en lugar de 1.
+
+**ROJO** – La prueba falla
+
+![Ronda 5 rojo](evidencia/tdd/r5_rojo.png)
+
+**VERDE** – Se revierte el cambio y la prueba pasa
+
+![Ronda 5 verde](evidencia/tdd/r5_verde.png)
+
+### Ronda 6 – Pantalla
+
+**Prueba:** las dos pruebas de `widget_test.dart`
+
+**Cambio para provocar el fallo:** `votacion_screen.dart`: el texto del botón se cambió de «Votar por esta opcion» a «Votar».
+
+**ROJO** – La prueba falla
+
+![Ronda 6 rojo](evidencia/tdd/r6_rojo.png)
+
+**VERDE** – Se revierte el cambio y la prueba pasa
+
+![Ronda 6 verde](evidencia/tdd/r6_verde.png)
+
+### Resultado final
 
 `flutter test` pasa las 11 pruebas.
 
-- `servicio_votacion_test.dart` (9): porcentajes, cero votos, voto repetido, opción inválida, ganador, empate, votación cerrada, votación abierta y una simulación completa.
+![flutter test](evidencia/04_flutter_test.png)
+
+- `servicio_votacion_test.dart` (9): porcentajes, cero votos, voto repetido, opción inválida, ganador, empate, votación cerrada, votación abierta y simulación completa.
 - `widget_test.dart` (2): la pantalla arranca en 0% y, al votar, la opción sube a 100% y los botones desaparecen.
+
+Los avisos de voto repetido y de votación cerrada no se ven en pantalla, porque tras votar la app oculta los botones; esos casos se comprueban con pruebas.
